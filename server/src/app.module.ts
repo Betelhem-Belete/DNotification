@@ -15,16 +15,24 @@ import { NotificationGateway } from './notification/notification.controller';
 import { AdminModule } from './admin/admin.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot({
-    type: 'mysql',
-    host: 'localhost',
-    port: 3306,
-    username: 'tati', 
-    password: '123',  
-    database: 'test',
-    entities: [todo, User,Message,Chat,Notification],
-    synchronize: true,
-  }),TodoModule, UserModule, MessageModule, ChatModule, NotificationModule, AdminModule],
-  providers:[NotificationGateway] // this is for websoket connection 
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'mysql-d4b7280-betelhembelete0-3754.a.aivencloud.com', //'localhost'
+      port: 21074,
+      username: 'avnadmin',
+      password: 'AVNS_aYuQtP9yA4h10j3cUDk',
+      database: 'defaultdb',
+      entities: [todo, User, Message, Chat, Notification],
+      synchronize: true,
+    }),
+    TodoModule,
+    UserModule,
+    MessageModule,
+    ChatModule,
+    NotificationModule,
+    AdminModule,
+  ],
+  providers: [NotificationGateway], // this is for websoket connection
 })
 export class AppModule {}
