@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { todo } from "../hooks/usetodo";
 
 const SendMessageComponent = () => {
   const [role, setRole] = useState('');
@@ -7,7 +6,7 @@ const SendMessageComponent = () => {
   const departments = ['Finance', 'Accounting', 'Sales']; // Add more departments as needed
 
   const handleSend = async () => {
-    const url = "http://localhost:3000/admin";
+    const url = 'https://nest-socket-server.onrender.com/admin'
     const method = "POST";
     try {
       const data = await fetch(url, {

@@ -2,21 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
-
-const token = localStorage.getItem('access_token')
-
-if(token){
-  const {access_token} = JSON.parse(token);
-
-console.log(access_token)
-const socket = io('http://localhost:3000', {
-  extraHeaders: {
-    Authorization: `Bearer ${access_token}`
-  }
-});
-}
+import Nofifi_Group from '../hooks/useNotification.jsx'
 
 const ChatComponent = () => {
+  const {handleJoinRoom_,handleMessageSend_} = Nofifi_Group()
+
   const [roomId, setRoomId] = useState('');
   const [message, setMessage] = useState('');
   const [receivedMessages, setReceivedMessages] = useState([]);
@@ -24,7 +14,6 @@ const ChatComponent = () => {
   // useEffect(() => {
   //   // Listener for incoming messages
   //   socket.on('connection', (message) => {
-
   //     setReceivedMessages(prevMessages => [...prevMessages, message]);
   //   });
 
@@ -35,13 +24,11 @@ const ChatComponent = () => {
   // }, []);
 
   const handleJoinRoom = () => {
-    socket.emit('joinRoom', roomId);
+    handleJoinRoom_(roomId);
   };
 
   const handleMessageSend = () => {
-    // Emit 'sendMessage' event with message and room ID
-    socket.emit('sendMessage', { room: roomId, message });
-    // Clear the message input after sending
+    handleMessageSend_(roomId, message)
     setMessage('');
   };
 
@@ -53,7 +40,7 @@ const ChatComponent = () => {
         <button onClick={handleJoinRoom}>Join Room</button>
       </div>
       <div>
-        {receivedMessages.map((msg, index) => (
+        {receivedMessages && receivedMessages.map((msg, index) => (
           <div key={index}>{msg}</div>
         ))}
       </div>

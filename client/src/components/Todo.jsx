@@ -11,22 +11,26 @@ function Todo() {
   useEffect(() => {
     async function fetchTodos() {
       try {
-        const url = "http://localhost:3000/todo/";
+        const url = "https://nest-socket-server.onrender.com/todo";
         const method = "GET";
-        const data = await todo(url, method);
-        setTodos(data);
+        const response = await fetch(url, { method });
+        if (!response.ok) {
+          throw new Error('Failed to fetch todos');
+        }
+        const data = await response.json();
+        setTodos(data); // Assuming data is an array of todos
       } catch (error) {
         console.error("Error fetching todos:", error);
       }
     }
     fetchTodos();
   }, []);
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (editedTodo) {
-        const url = `http://localhost:3000/todo/${editedTodo.id}`;
+        const url = `https://nest-socket-server.onrender.com/todo/${editedTodo.id}`;
         const method = "PATCH";
         await todo(url, method, { title });
         const updatedTodos = todos.map((todo) =>
@@ -35,7 +39,7 @@ function Todo() {
         setTodos(updatedTodos);
         setEditedTodo(null);
       } else {
-        const url = "http://localhost:3000/todo/add";
+        const url = "https://nest-socket-server.onrender.com/todo/add";
         const method = "POST";
         const data = await todo(url, method, title);
         setTodos([...todos, data]);
@@ -49,7 +53,7 @@ function Todo() {
 
   const handleDelete = async (id) => {
     try {
-      const url = `http://localhost:3000/todo/${id}`;
+      const url = `https://nest-socket-server.onrender.com/todo/${id}`;
       const method = "DELETE";
       await todo(url, method);
       setTodos(todos.filter((todo) => todo.id !== id));
@@ -65,7 +69,7 @@ function Todo() {
   };
 
   const handleCheckboxChange = (id, checked) => {
-    const updatedTodos = todos.map((todo) =>
+    const updatedTodos = todos?.map((todo) =>
       todo.id === id ? { ...todo, completed: checked } : todo
     );
     setTodos(updatedTodos);
@@ -90,7 +94,7 @@ function Todo() {
       </form>
 
       <ul className="list-group">
-        {todos.map((todo) => (
+        {todos && todos?.map((todo) => (
           <li
             key={todo.id}
             className="list-group-item d-flex justify-content-between align-items-center"

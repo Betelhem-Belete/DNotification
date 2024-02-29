@@ -9,21 +9,41 @@ import { Repository } from 'typeorm';
 export class ChatService {
   constructor(@InjectRepository(Chat)private chat : Repository<Chat>){}
   async create(createChatDto: CreateChatDto) {
-    const data = await this.chat.createQueryBuilder()
-      .insert()
-      .into(Chat)
-      .values([
-        {
-          sender: createChatDto.sender, 
+    try {
+      // Check if a chat record exists with the same sender or receiver
+      const existingChat = await this.chat.findOne({
+        where: [
+          { sender: createChatDto.sender, receiver: createChatDto.receiver },
+          { sender: createChatDto.receiver, receiver: createChatDto.sender }
+        ],
+      });
+  
+      if (existingChat) {
+        // If a chat record already exists, send that record
+        console.log('Existing chat:', existingChat);
+        return existingChat;
+      } else {
+        // If no chat record exists, create a new one
+        const newChat = await this.chat.create({
+          sender: createChatDto.sender,
           receiver: createChatDto.receiver,
-        },
-      ])
-      .execute()
-return data.identifiers[0].id
+        });
+        // Save the newly created chat record
+        const savedChat = await this.chat.save(newChat);
+        console.log('Newly created chat:', savedChat);
+        return savedChat;
+      }
+    } catch (error) {
+      console.error('Error creating or fetching chat:', error);
+      throw new Error('Error creating or fetching chat');
+    }
   }
+  
+  
 
-  findAll() {
-    return `This action returns all chat`;
+  async findAll() {
+    const all_chats = await this.chat.find()
+    return all_chats;
   }
 
   findOne(id: number) {

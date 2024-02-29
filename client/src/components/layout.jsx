@@ -2,19 +2,22 @@ import React, { useState, useEffect, useRef } from 'react';
 import Todo from './Todo';
 import Socket from './socket.jsx';
 import Chat_pg from './caht.jsx';
-import io from 'socket.io-client';
+// import io from 'socket.io-client';
+import Nofifi_Group from '../hooks/useNotification.jsx'
+import Message from './message.jsx';
 
 const Layout = () => {
+  const {notification} = Nofifi_Group()
   const [notificationCount, setNotificationCount] = useState(0); // Initial notification count
   const [showDropdown, setShowDropdown] = useState(false); // State to control dropdown visibility
   const dropdownRef = useRef(null); // Ref for the dropdown element
-  const [notification, setNotification] = useState([])
-  // useEffect(()=>{
 
-  // },[])
+  useEffect(()=>{
+    setNotificationCount(notification.length)
+    console.log(notification.length)
+  },[notification])
   //////////
   const token = localStorage.getItem('access_token')
-
 if(!token){
   return (
     <div>
@@ -22,22 +25,7 @@ if(!token){
     </div>
   )
 }
-const {access_token} = JSON.parse(token);
-
-const socket = io('http://localhost:3000/', {
-  extraHeaders: {
-    Authorization: `Bearer ${access_token}`
-  }
-})
-socket.on('notification', (data)=>{
-  setNotification([data])
-  console.log("notificaiton",[data])
-  setNotificationCount(notification.length);
-  console.log(notification.length)
-})
-
 ////////
-console.log(notification)
   const handleNotificationClick = () => {
     // Reset notification count when clicked
     setNotificationCount(0);
@@ -69,6 +57,8 @@ console.log(notification)
           <button className="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Todos</button>
           <button className="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Chat</button>
           <button className="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Profile</button>
+          <button className="nav-link" id="nav-message-tab" data-bs-toggle="tab" data-bs-target="#nav-message" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">message</button>
+
           {/* Notification button */}
           <div className="dropdown" ref={dropdownRef}>
             <button className="nav-link dropdown-toggle" id="notification-tab" onClick={handleNotificationClick} aria-expanded={showDropdown ? "true" : "false"}>
@@ -82,7 +72,7 @@ console.log(notification)
             </button>
             <ul className={`dropdown-menu ${showDropdown ? 'show' : ''}`} aria-labelledby="notification-tab">
               {notification && notification.map(n =>(
-               <li><a className="dropdown-item" href="#">{n.message}</a></li>
+               <li><a className="dropdown-item" href="#">{n}</a></li>
 
               ))}           
             </ul>
@@ -93,6 +83,7 @@ console.log(notification)
         <div className="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0"><Todo/></div>
         <div className="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab" tabindex="0"><Socket/></div>
         <div className="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab" tabindex="0"><Chat_pg/></div>
+        <div className="tab-pane fade" id="nav-message" role="tabpanel" aria-labelledby="nav-contact-tab" tabindex="0"><Message/></div>
       </div>
     </>
   );
