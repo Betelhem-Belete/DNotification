@@ -15,6 +15,7 @@ import { NotificationGateway } from './notification/notification.controller';
 import { AdminModule } from './admin/admin.module';
 
 @Module({
+
   imports: [TypeOrmModule.forRoot({
     type: 'mysql',
     host: 'mysql-159caac8-tatitaye0-03ac.a.aivencloud.com',//'localhost',
@@ -26,5 +27,6 @@ import { AdminModule } from './admin/admin.module';
     synchronize: true,
   }),TodoModule, UserModule, MessageModule, ChatModule, NotificationModule, AdminModule],
   providers:[NotificationGateway] // this is for websoket connection 
+
 })
 export class AppModule {}
