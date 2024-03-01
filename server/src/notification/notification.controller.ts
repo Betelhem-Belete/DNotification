@@ -10,7 +10,9 @@ interface JwtPayload {
   iat?: number;
   exp?: number;
 }
-
+interface user {
+  id: string;
+}
 interface SocketMetaPayload extends JwtPayload {
   socketId: string;
 }
@@ -18,13 +20,16 @@ interface SocketMetaPayload extends JwtPayload {
 interface GroupedNotification extends JwtPayload {
   socketId: string;
 }
-
+interface messaging extends user {
+  socketId: string;
+}
 @WebSocketGateway({ cors: '*' })
 export class NotificationGateway implements OnModuleInit {
 
   @WebSocketServer()
   server: Server;
   socketMap = new Map<string, SocketMetaPayload>();
+  messaging = new Map<string, messaging>();
   socketMapGroup = new Map<string, GroupedNotification[]>(); // Changed to an array for multiple sockets per role
 
   constructor(
@@ -34,7 +39,7 @@ export class NotificationGateway implements OnModuleInit {
 
   onModuleInit() {
     this.server.on('connection', async (socket) => {
-      console.log(`Socket connected: ${socket.id}`);
+      // console.log(`Socket connected: ${socket.id}`);
       const token = socket.handshake.headers.authorization?.split(' ')[1];
       if (!token) {
         socket.disconnect(true);
@@ -44,13 +49,17 @@ export class NotificationGateway implements OnModuleInit {
 
       try {
         const payload = this.jwt.verify(token);
-        console.log("My payload", payload);
+        // console.log("My payload", payload);
 
         this.socketMap.set(payload.id, {
           ...payload,
           socketId: socket.id,
         });
-
+        ////
+        this.messaging.set(payload.id, {
+          ...payload,
+          socketId: socket.id,
+        });
         // Check if role exists in the group map
         if (!this.socketMapGroup.has(payload.role)) {
           // If role doesn't exist, create a new entry with an empty array
@@ -78,7 +87,7 @@ export class NotificationGateway implements OnModuleInit {
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`Client disconnected: ${client.id}`);
+    // console.log(`Client disconnected: ${client.id}`);
     // Remove disconnected client from the socketMap
     this.socketMap.forEach((value, key) => {
       if (value.socketId === client.id) {
@@ -99,7 +108,7 @@ export class NotificationGateway implements OnModuleInit {
       const userSocket = this.socketMap.get(userId);
       this.server.to(userSocket.socketId).emit('notification', notification);
     } else {
-      console.log(`User with ID ${userId} is not online.`);
+       console.log(`User with ID ${userId} is not online.`);
     }
   }
   
@@ -115,10 +124,20 @@ export class NotificationGateway implements OnModuleInit {
 
     // Log if no sockets found in the group
     if (sockets.length === 0) {
-      console.log(`No ${role} users online at the moment!`);
+      // console.log(`No ${role} users online at the moment!`);
     }
   }
 
+  // @SubscribeMessage('joinRoom')
+  // handleJoinRoom(client: Socket, room: string) {
+  //   client.join(room);
+  //   console.log(`Client ${client.id} joined room ${room}`);
+  // }
+
+  // @SubscribeMessage('sendMessage')
+  // handleMessage(client: Socket, data: { room: string, message: string }) {
+  //   this.server.to(data.room).emit('message', data.message); // Emit 'message' event with the received message
+  // }
   @SubscribeMessage('joinRoom')
   handleJoinRoom(client: Socket, room: string) {
     client.join(room);
@@ -126,8 +145,16 @@ export class NotificationGateway implements OnModuleInit {
   }
 
   @SubscribeMessage('sendMessage')
-  handleMessage(client: Socket, data: any) {
-    this.server.to(data.room).emit('connection', data.message);
+  handleMessage(client: Socket, data: { userId: string, message: string }) {
+    console.log(data.message, "and", data.userId)
+    if (this.messaging.has(data.userId)) {
+      const userSocket = this.socketMap.get(data.userId);
+      this.server.to(userSocket.socketId).emit('message', data.message);
+    } else {
+       console.log(`User with ID ${data.userId} is not online.`);
+    }
+    // console.log(data.room, "  ",data.message)
+    // this.server.to(data.room).emit('message', data.message);
   }
   @SubscribeMessage('currentUsers')
   async currentUsers(client: Socket) {

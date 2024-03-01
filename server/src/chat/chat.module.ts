@@ -3,10 +3,12 @@ import { ChatService } from './chat.service';
 import { ChatController } from './chat.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Chat } from './entities/chat.entity';
+import { NotificationGateway } from '../notification/notification.controller';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Chat])],
+  imports: [TypeOrmModule.forFeature([Chat]),NotificationModule],
   controllers: [ChatController],
-  providers: [ChatService],
+  providers: [ChatService,NotificationGateway],
 })
 export class ChatModule {}

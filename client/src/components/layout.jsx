@@ -7,15 +7,15 @@ import Nofifi_Group from '../hooks/useNotification.jsx'
 import Message from './message.jsx';
 
 const Layout = () => {
-  const {notification} = Nofifi_Group()
+  // const {notification} = Nofifi_Group()
   const [notificationCount, setNotificationCount] = useState(0); // Initial notification count
   const [showDropdown, setShowDropdown] = useState(false); // State to control dropdown visibility
   const dropdownRef = useRef(null); // Ref for the dropdown element
 
-  useEffect(()=>{
-    setNotificationCount(notification.length)
-    console.log(notification.length)
-  },[notification])
+  // useEffect(()=>{
+  //   setNotificationCount(notification.length)
+  //   console.log(notification.length)
+  // },[notification])
   //////////
   const token = localStorage.getItem('access_token')
 if(!token){
@@ -26,29 +26,29 @@ if(!token){
   )
 }
 ////////
-  const handleNotificationClick = () => {
-    // Reset notification count when clicked
-    setNotificationCount(0);
-    // Toggle dropdown visibility
-    setShowDropdown(!showDropdown);
+    const handleNotificationClick = () => {
+  //   // Reset notification count when clicked
+  //   setNotificationCount(0);
+  //   // Toggle dropdown visibility
+  //   setShowDropdown(!showDropdown);
+  // };
+
+  // const handleClickOutside = (event) => {
+  //   // Close dropdown when clicking outside
+  //   if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+  //     setShowDropdown(false);
+  //   }
   };
 
-  const handleClickOutside = (event) => {
-    // Close dropdown when clicking outside
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-      setShowDropdown(false);
-    }
-  };
+  // useEffect(() => {
+  //   // Attach click event listener to the document
+  //   document.addEventListener('click', handleClickOutside);
 
-  useEffect(() => {
-    // Attach click event listener to the document
-    document.addEventListener('click', handleClickOutside);
-
-    // Cleanup the event listener on component unmount
-    return () => {
-      document.removeEventListener('click', handleClickOutside);
-    };
-  }, []);
+  //   // Cleanup the event listener on component unmount
+  //   return () => {
+  //     document.removeEventListener('click', handleClickOutside);
+  //   };
+  // }, []);
 
   return (
     <>
@@ -70,12 +70,12 @@ if(!token){
               {/* Notification count */}
               {notificationCount > 0 && <span className="badge bg-danger">{notificationCount}</span>}
             </button>
-            <ul className={`dropdown-menu ${showDropdown ? 'show' : ''}`} aria-labelledby="notification-tab">
+            {/* <ul className={`dropdown-menu ${showDropdown ? 'show' : ''}`} aria-labelledby="notification-tab">
               {notification && notification.map(n =>(
                <li><a className="dropdown-item" href="#">{n}</a></li>
 
               ))}           
-            </ul>
+            </ul> */}
           </div>
         </div>
       </nav>

@@ -12,7 +12,7 @@ export class ChatController {
     return this.chatService.create(createChatDto);
   }
 
-  @Get()
+  @Get('all')
   findAll() {
     return this.chatService.findAll();
   }

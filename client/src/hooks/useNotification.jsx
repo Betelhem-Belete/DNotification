@@ -16,7 +16,7 @@ const Notifi_Group = () => {
       }
       const {access_token} = JSON.parse(token);
 
-      const socket = io("https://nest-socket-server.onrender.com", {
+      const socket = io("http://localhost:3000/", {
         extraHeaders: {
           Authorization: `Bearer ${access_token}`
         }
@@ -27,6 +27,7 @@ const Notifi_Group = () => {
       })
       //////////
       const handleJoinRoom_ = (roomId) => {
+        console.log(roomId ,"the room id")
         socket.emit('joinRoom', roomId);
       };
       //////////

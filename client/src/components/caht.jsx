@@ -6,7 +6,7 @@ const SendMessageComponent = () => {
   const departments = ['Finance', 'Accounting', 'Sales']; // Add more departments as needed
 
   const handleSend = async () => {
-    const url = 'https://nest-socket-server.onrender.com/admin'
+    const url = 'http://localhost:3000/admin'
     const method = "POST";
     try {
       const data = await fetch(url, {

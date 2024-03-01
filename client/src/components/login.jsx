@@ -14,7 +14,7 @@ const LoginPage = () => {
     // Add your login logic here, such as calling an API to authenticate the user
     try {
       // Replace this with your actual login logic
-      const response = await fetch('https://nest-socket-server.onrender.com/user/login', {
+      const response = await fetch('http://localhost:3000/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

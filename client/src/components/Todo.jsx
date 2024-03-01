@@ -11,7 +11,7 @@ function Todo() {
   useEffect(() => {
     async function fetchTodos() {
       try {
-        const url = "https://nest-socket-server.onrender.com/todo";
+        const url = "http://localhost:3000/todo";
         const method = "GET";
         const response = await fetch(url, { method });
         if (!response.ok) {
@@ -30,7 +30,7 @@ function Todo() {
     e.preventDefault();
     try {
       if (editedTodo) {
-        const url = `https://nest-socket-server.onrender.com/todo/${editedTodo.id}`;
+        const url = `http://localhost:3000/todo/${editedTodo.id}`;
         const method = "PATCH";
         await todo(url, method, { title });
         const updatedTodos = todos.map((todo) =>
@@ -39,7 +39,7 @@ function Todo() {
         setTodos(updatedTodos);
         setEditedTodo(null);
       } else {
-        const url = "https://nest-socket-server.onrender.com/todo/add";
+        const url = "http://localhost:3000/todo/add";
         const method = "POST";
         const data = await todo(url, method, title);
         setTodos([...todos, data]);
@@ -53,7 +53,7 @@ function Todo() {
 
   const handleDelete = async (id) => {
     try {
-      const url = `https://nest-socket-server.onrender.com/todo/${id}`;
+      const url = `http://localhost:3000/todo/${id}`;
       const method = "DELETE";
       await todo(url, method);
       setTodos(todos.filter((todo) => todo.id !== id));
